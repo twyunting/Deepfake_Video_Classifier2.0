@@ -22,14 +22,8 @@ X2 = np.load("X2_texts.npy", allow_pickle=True)
 print(X1.shape)
 print(X2.shape)
 
-print(X2[100].shape)
-print(X2[1000].shape)
-print(X2[5000].shape)
-print(X2[1590].shape)
-
-print(X2[1590])
-
-"""# Fill 0 into each column to make sure the length of vectors are the same."""
+"""
+# Fill 0 into each column to make sure the length of vectors are the same.
 
 def numpy_fillna(data):
     # Get lengths of each row of data
@@ -39,23 +33,36 @@ def numpy_fillna(data):
     mask = np.arange(lens.max()) < lens[:,None]
 
     # Setup output array and put elements from data into masked positions
-    out = np.zeros(mask.shape, dtype=data.dtype)
+    out = np.zeros(mask.shape, dtype=np.float32)
     out[mask] = np.concatenate(data)
     return out
+
 X2 = numpy_fillna(X2)
-print(X2.shape)
+X2 = X2[:, :300]
 
-print(X2[2])
-print(np.where(X2[2] == 0)[0])
 
-print(len(X2[2]))
-print(len(np.where(X2[2] == 0)[0]))
+# KNN Imputation
+from sklearn.impute import KNNImputer
+imp = KNNImputer(n_neighbors=3, weights="uniform", missing_values=0)
+imp.fit(X2)
+X2 = imp.transform(X2)
+"""
+
+#print(X2[2])
+#print(np.where(X2[2] == 0)[0])
+
+#print(len(X2[2]))
+#print(len(np.where(X2[2] == 0)[0]))
 
 """# Concatenate image arrays and text arrays
 - Finally, there are 19470 observation and 20988 variables (features). 
 """
 
 X_data = np.concatenate((X1, X2), axis = 1)
+X_data = X_data.astype(np.float32)
+print(X_data)
+print(X_data.dtype)
+
 np.save("X_data.npy", X_data)
 print("-----------data dimension---------------")
 print(X_data.shape)

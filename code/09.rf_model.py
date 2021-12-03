@@ -19,6 +19,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import KFold
 from sklearn.model_selection import GridSearchCV
+from sklearn.impute import SimpleImputer
 
 
 
@@ -26,59 +27,27 @@ from sklearn.model_selection import GridSearchCV
 # Exploratory Data Analysis
 ##Read the data (`.npz` file)
 
-X_data = np.load("X_data.npy", allow_pickle=True)
-y_fake = np.zeros((9720, 1))
-y_real = np.zeros((9750, 1))
-y_data = np.concatenate((y_fake, y_real), axis = 0)
+X = np.load("X_data.npy", allow_pickle=True)
 
-"""
-for item in data_zipped.files:
-    print(item)
-    print(data_zipped[item])
-    
-#print(data_zipped[item].shape)
-data = data_zipped[item]
+# fill the NAs from Text features
+imp = SimpleImputer(missing_values=np.nan, strategy='mean')
+imp.fit(X[:, 12288:])
+X[:, 12288:] = imp.transform(X[:, 12288:])
 
-"""## Check the length of $X$ and $y$"""
-"""
-X = []
-y = []
-for i in data:
-  X.append(i[0])
-  y.append(i[1])
-print("The length of X feature is", len(X[1]))
+print("data dim: {}".format(X.shape))
 
-print("The length should be " + str((6984+7000)))
-print("data dimension:",data.shape)
+# create label y
+fake = np.zeros((9720, 1)) # fake labels 0
+real = np.ones((9750, 1)) # real labels 1
+y = np.concatenate((fake, real), axis = 0)
 
-"""## Visualization"""
-"""
-fake_cnt = 0
-real_cnt = 0
-for i in data:
-  if i[1] == "fake":
-    fake_cnt += 1
-  else:
-    real_cnt += 1
-
-#print(fake_cnt)
-#print(real_cnt)
-df = [['fake', fake_cnt], ['real', real_cnt]]
-df = pd.DataFrame(df, columns=['image_type', 'count'])
-#ax = df.plot.bar(x='video_type', y='count', rot=0)
-fig = plt.figure()
-plt.bar(df['image_type'], df['count'])
-plt.xlabel("Image Type")
-plt.ylabel("Count")
-plt.savefig('10.count_type.png')
-"""
 """# Machine Learning Task
-"""
+
 
 """## Random Forest Classifier"""
 
 start_time = time.time()
-X_train, X_test, y_train, y_test = train_test_split(X_data, y_data, test_size = 0.2, random_state = 42) # 80% for training, 20 for of testing
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 42) # 80% for training, 20 for of testing
 
 ### Cross vaildation procedure and define a classifier
 cv_inner = KFold(n_splits=5, shuffle=True, random_state=100)
@@ -87,8 +56,12 @@ rf_clf = RandomForestClassifier(random_state=42, bootstrap=True)
 # define search space
 # n_estimators: The number of trees in the forest.
 space = {}
-#space['n_estimators'] = list(range(1, 10000, 500))
-space['n_estimators'] = [100, 500, 1000, 2000, 5000]
+space['n_estimators'] = [100, 500, 1000, 2000]
+space['max_depth'] = [None, 100, 500, 1000]
+space['max_features'] = ['auto', 'sqrt']
+space['min_samples_leaf'] = [100, 500, 1000]
+space['min_samples_split'] = [100, 500, 1000]
+
 
 # define search
 search = GridSearchCV(rf_clf, space, scoring='accuracy', n_jobs=1, cv=cv_inner)
@@ -123,7 +96,7 @@ plt.xlabel('Predictions', fontsize=18)
 plt.ylabel('Actuals', fontsize=18)
 plt.title('Confusion Matrix', fontsize=18)
 plt.show()
-plt.savefig('10.confusion_matrix.png')
+plt.savefig('random_forest_confusion_matrix.png')
 
 
 ### RF Accuracy Score
