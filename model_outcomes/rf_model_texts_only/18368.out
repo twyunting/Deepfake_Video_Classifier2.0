@@ -1,0 +1,66 @@
+Sender: LSF System <lsfadmin@cudanode>
+Subject: Job 18368: <#!/bin/bash;#BSUB -q gpu;#BSUB -o %J.out;#BSUB -e %J.err; /app/python3/bin/python3 10.rf_model_txt_only.py> in cluster <auzorrocluster> Done
+
+Job <#!/bin/bash;#BSUB -q gpu;#BSUB -o %J.out;#BSUB -e %J.err; /app/python3/bin/python3 10.rf_model_txt_only.py> was submitted from host <zorro> by user <yc6705a> in cluster <auzorrocluster> at Wed Dec  8 13:14:19 2021
+Job was executed on host(s) <cudanode>, in queue <gpu>, as user <yc6705a> in cluster <auzorrocluster> at Wed Dec  8 13:14:20 2021
+</home/yc6705a> was used as the home directory.
+</home/yc6705a/ADVML> was used as the working directory.
+Started at Wed Dec  8 13:14:20 2021
+Terminated at Wed Dec  8 13:22:01 2021
+Results reported at Wed Dec  8 13:22:01 2021
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+#!/bin/bash
+#BSUB -q gpu
+#BSUB -o %J.out
+#BSUB -e %J.err
+
+/app/python3/bin/python3 10.rf_model_txt_only.py
+
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   463.13 sec.
+    Max Memory :                                 175 MB
+    Average Memory :                             168.91 MB
+    Total Requested Memory :                     -
+    Delta Memory :                               -
+    Max Swap :                                   -
+    Max Processes :                              5
+    Max Threads :                                29
+    Run time :                                   461 sec.
+    Turnaround time :                            462 sec.
+
+The output (if any) follows:
+
+data dim: (19470, 300)
+{'max_depth': 50, 'n_estimators': 100}
+Best Model: RandomForestClassifier(max_depth=50, random_state=42)
+--- 454.05670070648193 seconds ---
+----------Confusion Matrix----------------
+[[1730  188]
+ [ 187 1789]]
+----------Accuracy Score----------------
+0.9036979969183359
+------------Classification Report----------
+              precision    recall  f1-score   support
+
+        fake       0.90      0.90      0.90      1918
+        real       0.90      0.91      0.91      1976
+
+    accuracy                           0.90      3894
+   macro avg       0.90      0.90      0.90      3894
+weighted avg       0.90      0.90      0.90      3894
+
+
+
+PS:
+
+Read file <18368.err> for stderr output of this job.
+

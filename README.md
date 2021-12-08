@@ -5,4 +5,6 @@
 
 ![](poster/poster.png)
 
+![](poster/rf_model_comparison.png)
+
 
